@@ -114,13 +114,11 @@ export const Thumb = forwardRef(
                       ref={ref}
                       src={url ? convertHttpToHttps(url) : noImage}
                       alt={product?.basic_data?.name}
-                      sizes={
-                        "(max-width: 639px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 100vw, (max-width: 1279px) 100vw, (min-width: 1600px) 50vw"
-                      }
+                      sizes="(max-width: 639px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 100vw, (max-width: 1279px) 100vw, (min-width: 1600px) 50vw"
                       width={0}
                       height={0}
                       fill
-                      className={`h-full w-full object-cover transition-all duration-700 ease-in-out hover:scale-110 ${
+                      className={`h-full w-full object-contain transition-all duration-700 ease-in-out hover:scale-105 ${
                         light ? "!bg-secondary" : "!bg-white"
                       }`}
                     />
