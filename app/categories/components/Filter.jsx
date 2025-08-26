@@ -162,9 +162,6 @@ const Filter = ({
   setChangeFilters,
   setPage,
 }) => {
-  if (filter.column === "id_category") {
-    return null;
-  }
   const changeHandler = (data) => {
     let tmp = [...selectedFilters];
     const filtered = tmp.filter((item) => item.column === data.column);

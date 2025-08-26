@@ -16,8 +16,8 @@ const RecommendedProducts = ({
       name: "Najprodavanije",
       products: bestSellingProducts,
     },
-    { id: "action", name: "Na akciji", products: actionProducts },
-    { id: "new", name: "Novo", products: newProducts },
+    { id: "new", name: "Najnovije", products: newProducts },
+    { id: "action", name: "Specijalne cene", products: actionProducts },
   ];
 
   const [selectedType, setSelectedType] = useState("bestSelling");

@@ -54,7 +54,7 @@ const NoStockModal = ({
                   <div key={id} className={`flex items-start gap-2 py-5`}>
                     <Link href={`/${slug}`}>
                       <Image
-                        src={image?.[0] ?? "/images/placeholder.jpg"}
+                        src={image?.[0] ?? "/images/no-image-karat.jpg"}
                         alt={name ?? sku ?? slug ?? "Ecommerce"}
                         width={80}
                         height={80}

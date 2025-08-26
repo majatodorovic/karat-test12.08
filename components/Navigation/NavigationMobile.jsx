@@ -85,10 +85,13 @@ const NavigationMobile = () => {
     enabled: true,
   });
 
-  const categoriesMain = [
-    { name: "Novo", slug: "/novo" },
-    { name: "Kontakt", slug: "/kontakt" },
-  ];
+  const filteredCategories = [...categories].filter(
+    (category) =>
+      category?.name !== "Karat zlatni nakit" &&
+      category?.name !== "Zlatnici" &&
+      category?.name !== "Conte Diamonds",
+  );
+  const categoriesMain = [{ name: "Kontakt", slug: "/kontakt" }];
 
   const handleCategoryClick = (category) => {
     if (!category.children?.length) {
@@ -263,7 +266,7 @@ const NavigationMobile = () => {
         </div>
 
         <div className="mx-auto mt-5 flex w-[95%] flex-col gap-3">
-          {(categories ?? [])?.map((category) => {
+          {(filteredCategories ?? [])?.map((category) => {
             const isExpanded = expandedCategory === category?.id;
             return (
               <div key={category?.id} className="flex flex-col">
@@ -404,7 +407,7 @@ const NavigationMobile = () => {
                       <div className="flex flex-row items-center gap-5">
                         <div className="relative h-[60px] w-[60px] min-w-[60px] rounded-full bg-lightGray">
                           <Image
-                            src={item.image[0] ?? "/images/placeholder.jpg"}
+                            src={item.image[0] ?? "/images/no-image-karat.jpg"}
                             alt={``}
                             fill
                             sizes="100vw"

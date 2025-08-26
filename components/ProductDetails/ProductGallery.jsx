@@ -22,7 +22,7 @@ export const ProductGallery = ({ productGallery, variantKeyArray }) => {
       ? productGallery?.gallery
       : [
           {
-            image: "/images/placeholder.jpg",
+            image: "/images/no-image-karat.jpg",
           },
         ],
   );

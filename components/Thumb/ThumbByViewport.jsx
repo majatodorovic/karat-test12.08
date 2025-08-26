@@ -9,7 +9,7 @@ import { convertHttpToHttps } from "@/helpers/convertHttpToHttps";
 import { get as GET } from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { truncateText } from "@/helpers/truncateText";
-import noImage from "../../public/images/placeholder.jpg";
+import noImage from "../../public/images/no-image-karat.jpg";
 import Link from "next/link";
 import { currencyFormat } from "@/helpers/functions";
 
@@ -200,7 +200,7 @@ const ThumbByViewport = ({
           </Link>
         </div>
         <div
-          className={`mb-2 text-left text-[15px] font-light ${categoryPage && "text-sm"}`}
+          className={`mb-2 truncate text-left text-[15px] font-light ${categoryPage && "text-sm"}`}
         >
           Šifra: {product?.basic_data?.sku}
         </div>
@@ -216,10 +216,12 @@ const ThumbByViewport = ({
         >
           <Link
             href={link}
-            className={`mainButton relative flex w-full items-center justify-between !py-1.5 !pl-14 text-center`}
+            className={`mainButton relative flex w-full items-center justify-between !py-1.5 !pl-14 text-center max-sm:!pr-3 ${
+              categoryPage ? "max-sm:!flex-col max-sm:!pl-3" : ""
+            }`}
           >
             <div
-              className={`absolute left-0 top-0 flex h-10 w-10 min-w-10 items-center justify-center rounded-full bg-lightGray`}
+              className={`absolute left-0 top-0 flex h-10 w-10 min-w-10 items-center justify-center rounded-full bg-lightGray ${categoryPage ? "max-sm:!hidden" : ""}`}
             >
               <Image
                 src="/icons/shopping-bag.png"
@@ -244,12 +246,12 @@ const ThumbByViewport = ({
                     product?.price?.price?.discount,
                     product?.price?.currency,
                   )
-                : currencyFormat(
+                : product?.price?.price?.original
+                  ? currencyFormat(
                       product?.price?.price?.original,
                       product?.price?.currency,
                     )
-                  ? "Cena na upit"
-                  : ""}
+                  : "Cena na upit"}
             </div>
           </Link>
           {/* Wishlist button can be added here if needed */}

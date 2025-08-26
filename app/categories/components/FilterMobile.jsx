@@ -91,9 +91,6 @@ const FiltersMobile = ({
         {availableFilters?.map((filter, index) => {
           const isOpen = openIndex.key === filter.key;
 
-          if (filter.column === "id_category") {
-            return null;
-          }
           return (
             <div key={index}>
               <div

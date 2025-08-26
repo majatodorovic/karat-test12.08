@@ -87,7 +87,7 @@ const Success = ({
                   >
                     <Link href={`/${slug}`}>
                       <Image
-                        src={image ?? "/images/placeholder.jpg"}
+                        src={image ?? "/images/no-image-karat.jpg"}
                         alt={`${name} - ${slug}`}
                         width={0}
                         height={0}

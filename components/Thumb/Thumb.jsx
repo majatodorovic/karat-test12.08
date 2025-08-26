@@ -8,7 +8,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { convertHttpToHttps } from "@/helpers/convertHttpToHttps";
 import { useProductThumb } from "@/hooks/ecommerce.hooks";
 import { truncateText } from "@/helpers/truncateText";
-import noImage from "../../public/images/placeholder.jpg";
+import noImage from "../../public/images/no-image-karat.jpg";
 import Link from "next/link";
 import Wishlist from "../ProductDetails/Wishlist";
 import { currencyFormat } from "@/helpers/functions";
@@ -22,6 +22,7 @@ export const Thumb = forwardRef(
       withWishlist,
       refreshWishlist,
       categoryPage = false,
+      viewMode = false,
     },
     ref,
   ) => {
@@ -167,19 +168,22 @@ export const Thumb = forwardRef(
           <div className="relative flex items-center justify-start">
             <Link href={link} className="relative line-clamp-1 cursor-pointer">
               <h3
-                className={`text-left text-[24px] font-normal ${categoryPage && "text-xl"}`}
+                className={`text-left text-[24px] font-normal max-sm:text-lg ${categoryPage && "text-xl"}`}
                 title={
                   product?.basic_data?.name.length > 63
                     ? product?.basic_data?.name
                     : ""
                 }
               >
-                {truncateText(product?.basic_data?.name)}
+                {truncateText(
+                  product.basic_data.name.charAt(0).toUpperCase() +
+                    product.basic_data.name.slice(1).toLowerCase(),
+                )}
               </h3>
             </Link>
           </div>
           <div
-            className={`mb-2 text-left text-[15px] font-light ${categoryPage && "text-sm"}`}
+            className={`mb-2 truncate text-left text-[15px] font-light ${categoryPage && "text-sm"}`}
           >
             Šifra: {product?.basic_data?.sku}
           </div>
@@ -195,10 +199,12 @@ export const Thumb = forwardRef(
           >
             <Link
               href={link}
-              className={`mainButton relative flex w-full items-center justify-between !py-1.5 !pl-14 text-center`}
+              className={`mainButton relative flex w-full items-center justify-between !py-1.5 !pl-14 text-center max-sm:!pr-3 ${
+                categoryPage && !viewMode ? "max-sm:!flex-col max-sm:!pl-3" : ""
+              }`}
             >
               <div
-                className={`absolute left-0 top-0 flex h-10 w-10 min-w-10 items-center justify-center rounded-full bg-lightGray`}
+                className={`absolute left-0 top-0 flex h-10 w-10 min-w-10 items-center justify-center rounded-full bg-lightGray ${categoryPage && !viewMode ? "max-sm:!hidden" : ""}`}
               >
                 <Image
                   src="/icons/shopping-bag.png"
@@ -209,7 +215,7 @@ export const Thumb = forwardRef(
                 />
               </div>
               <div
-                className={`text-lg font-light ${categoryPage && "text-base"}`}
+                className={`text-lg font-light ${categoryPage && !viewMode && "max-sm:hidden"}`}
               >
                 Korpa
               </div>

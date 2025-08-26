@@ -39,28 +39,28 @@ const Footer = () => {
           <div className="flex w-full flex-col items-center justify-between gap-3 max-sm:items-start sm:flex-row">
             <div className="flex flex-wrap items-center gap-1 text-[17px] font-light max-sm:flex-col max-sm:items-start">
               <Link
+                href={`/strana/uslovi-koriscenja`}
+                className="hover:text-primary"
+              >
+                Uslovi korišćenja
+              </Link>
+              <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
+              <Link
                 href={`/strana/pravilnik-o-zastiti-podataka`}
                 className="hover:text-primary"
               >
                 Pravilnik o zaštiti podataka
               </Link>
               <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
+              <Link
+                href={`/strana/dostava-i-placanje`}
+                className="hover:text-primary"
+              >
+                Dostava i plaćanje
+              </Link>
+              <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
               <Link href={`/strana/reklamacije`} className="hover:text-primary">
                 Reklamacije
-              </Link>
-              <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
-              <Link
-                href={`/strana/pravo-na-odustajanje`}
-                className="hover:text-primary"
-              >
-                Pravo na odustajanje
-              </Link>
-              <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
-              <Link
-                href={`/strana/zamena-artikala`}
-                className="hover:text-primary"
-              >
-                Zamena artikala
               </Link>
               <div className="rounded-full bg-primary sm:mx-2 sm:h-[3px] sm:w-[3px]"></div>
               <Link href={`/strana/kako-kupiti`} className="hover:text-primary">

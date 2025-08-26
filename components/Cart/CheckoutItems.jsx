@@ -66,7 +66,7 @@ const CheckoutItems = ({
       </button>
       <Link href={`/${slug_path}`} className="w-full">
         <Image
-          src={image?.[0] ?? "/images/placeholder.jpg"}
+          src={image?.[0] ?? "/images/no-image-karat.jpg"}
           alt={`Comr`}
           width={0}
           height={0}

@@ -26,6 +26,7 @@ export const CategoryProducts = ({
   const router = useRouter();
   const params = useSearchParams();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState("grid");
 
   //params iz URL-a
   const filterKey = params?.get("filteri");
@@ -229,7 +230,7 @@ export const CategoryProducts = ({
   return (
     <>
       <div
-        className={`sectionPaddingX sticky top-[24px] z-[51] mt-10 flex items-center gap-5 xl:hidden`}
+        className={`sectionPaddingX sticky top-[24px] z-[51] mt-10 flex items-center gap-3 xl:hidden`}
       >
         <button
           className={`flex flex-1 items-center justify-center overflow-hidden rounded-lg border border-primary bg-white py-2 text-center text-base md:text-lg`}
@@ -237,6 +238,43 @@ export const CategoryProducts = ({
         >
           Filteri
         </button>
+        <div className="flex items-center gap-3 sm:hidden">
+          <button onClick={() => setViewMode("list")} title="Jedan stupac">
+            <div
+              className={`h-8 w-8 border-2 border-primary ${
+                viewMode === "grid" && "!border-black/20"
+              }`}
+            ></div>
+          </button>
+          <button onClick={() => setViewMode("grid")} title="Dva stupca">
+            <div
+              className={`grid h-8 w-8 grid-cols-2 border border-primary ${
+                viewMode !== "grid" && "!border-black/20"
+              }`}
+            >
+              <div
+                className={`border border-primary ${
+                  viewMode !== "grid" && "!border-black/20"
+                }`}
+              ></div>
+              <div
+                className={`border border-primary ${
+                  viewMode !== "grid" && "!border-black/20"
+                }`}
+              ></div>
+              <div
+                className={`border border-primary ${
+                  viewMode !== "grid" && "!border-black/20"
+                }`}
+              ></div>
+              <div
+                className={`border border-primary ${
+                  viewMode !== "grid" && "!border-black/20"
+                }`}
+              ></div>
+            </div>
+          </button>
+        </div>
       </div>
       {data?.items?.length > 0 || data?.pages?.length > 0 ? (
         <>
@@ -275,7 +313,7 @@ export const CategoryProducts = ({
                         />
                       }
                     >
-                      <Thumb slug={id} categoryId={slug ?? "*"} categoryPage />
+                      <Thumb slug={id} categoryId={slug ?? "*"} />
                     </Suspense>
                   );
                 })}
@@ -287,7 +325,9 @@ export const CategoryProducts = ({
             className={`sectionPaddingX pb-12 pt-10 xl:hidden`}
           >
             <div
-              className={`grid grid-cols-1 gap-x-[20px] gap-y-[36px] sm:grid-cols-2 lg:grid-cols-3 2xl:mt-[50px]`}
+              className={`grid gap-x-[20px] gap-y-[36px] max-sm:gap-x-2 sm:grid-cols-2 lg:grid-cols-3 2xl:mt-[50px] ${
+                viewMode === "list" ? "grid-cols-1" : "grid-cols-2"
+              }`}
             >
               {getItems(pagination_type)?.map(({ id }) => {
                 return (
@@ -299,7 +339,12 @@ export const CategoryProducts = ({
                       />
                     }
                   >
-                    <Thumb slug={id} key={`$thumb-${id}`} />
+                    <Thumb
+                      slug={id}
+                      key={`$thumb-${id}`}
+                      categoryPage
+                      viewMode={!!(viewMode === "list")}
+                    />
                   </Suspense>
                 );
               })}

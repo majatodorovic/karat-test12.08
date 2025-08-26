@@ -3,8 +3,11 @@ import Link from "next/link";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { get } from "@/api/api";
 import Image from "next/image";
+import { useState } from "react";
 
 export const CategoryChildren = ({ slug }) => {
+  const [showAll, setShowAll] = useState(false);
+
   const { data: categories } = useSuspenseQuery({
     queryKey: ["products", { slug }],
     queryFn: async () => {
@@ -17,11 +20,19 @@ export const CategoryChildren = ({ slug }) => {
   });
   const currentSlug = categories?.slug;
 
+  const itemsPerRow = Math.floor((window.innerWidth - 80) / 200);
+  const maxItemsToShow = itemsPerRow * 2;
+  const totalItems = categories?.childrens?.length || 0;
+  const itemsToShow = showAll
+    ? totalItems
+    : Math.min(maxItemsToShow, totalItems);
+  const hasMoreItems = totalItems > maxItemsToShow;
+
   return (
-    <div className="sectionPaddingX">
+    <div className="sectionPaddingX max-xl:hidden">
       <div className="flex w-full flex-wrap gap-4">
         {categories?.childrens &&
-          (categories?.childrens ?? [])?.map((child) => (
+          (categories?.childrens ?? [])?.slice(0, itemsToShow).map((child) => (
             <div
               className="w-fit min-w-[180px] text-center max-sm:w-full"
               key={child?.id}
@@ -53,6 +64,17 @@ export const CategoryChildren = ({ slug }) => {
             </div>
           ))}
       </div>
+
+      {hasMoreItems && !showAll && (
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={() => setShowAll(true)}
+            className="mainButton !px-6 !py-2 !text-sm"
+          >
+            Pogledaj još ({totalItems - maxItemsToShow})
+          </button>
+        </div>
+      )}
     </div>
   );
 };

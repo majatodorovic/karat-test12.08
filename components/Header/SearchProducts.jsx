@@ -7,7 +7,7 @@ import Link from "next/link";
 import { currencyFormat } from "@/helpers/functions";
 import useDebounce from "@/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
-import noImage from "../../public/images/placeholder.jpg";
+import noImage from "../../public/images/no-image-karat.jpg";
 
 const SearchProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");

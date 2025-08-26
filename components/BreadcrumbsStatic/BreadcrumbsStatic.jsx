@@ -11,6 +11,7 @@ const slugToTitleMap = {
   "pravo-na-odustajanje": "Pravo na odustajanje",
   "zamena-artikala": "Zamena artikala",
   "o-nama": "O nama",
+  "dostava-i-placanje": "Dostava i plaćanje",
   // Dodaj ostale slugove koje koristiš
 };
 
