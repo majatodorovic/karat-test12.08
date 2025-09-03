@@ -118,7 +118,7 @@ const RenderSlider = ({ banners }) => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="absolute right-[100px] top-1/2 z-[50] flex -translate-y-1/2 flex-col items-center gap-2">
+      <div className="absolute right-5 top-1/2 z-[50] flex -translate-y-1/2 flex-col items-center gap-2 md:right-10 lg:right-[60px] 2xl:right-[70px] 3xl:right-[100px]">
         {banners?.map((banner, index) => (
           <div
             key={index}

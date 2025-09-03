@@ -53,25 +53,6 @@ const Header = () => {
     image: null,
   });
 
-  // Delayed close handling to avoid closing when moving into dropdown
-  const [isDropdownHovered, setIsDropdownHovered] = useState(false);
-  const closeTimeoutRef = useRef(null);
-  const scheduleClose = () => {
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    closeTimeoutRef.current = setTimeout(() => {
-      if (!isDropdownHovered) resetActiveCategory();
-    }, 150);
-  };
-  const cancelScheduledClose = () => {
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    };
-  }, []);
-
   const resetActiveCategory = () => {
     setActiveCategory({
       open: false,
@@ -98,16 +79,16 @@ const Header = () => {
     const handleScroll = () => {
       if (window.scrollY < 40)
         return setVisible(
-          "sticky top-0 translate-y-0 transition-all duration-300",
+          "sticky top-0 translate-y-0 transition-all duration-500",
         );
       const currentScroll = window.scrollY;
       if (currentScroll > lastScroll) {
         setVisible(
-          "sticky top-0 -translate-y-full transition-all duration-300",
+          "sticky top-0 -translate-y-full transition-all duration-500",
         );
         resetActiveCategory();
       } else {
-        setVisible("sticky top-0 translate-y-0 transition-all duration-300");
+        setVisible("sticky top-0 translate-y-0 transition-all duration-500");
       }
       lastScroll = currentScroll;
     };
@@ -117,9 +98,6 @@ const Header = () => {
     };
   }, []);
   const pathname = usePathname();
-  const hoveredHasChildren =
-    Array.isArray(hoveredCategory?.children) &&
-    hoveredCategory?.children.length > 0;
 
   return (
     <>
@@ -159,27 +137,22 @@ const Header = () => {
                     } activeCategoryHover relative block w-fit text-nowrap text-[15px] text-[#171717] hover:after:-bottom-[30px] 2xl:text-[17px]`}
                     onMouseEnter={() => {
                       setActiveCategory({
-                        id:
-                          category?.id === activeCategory?.id
-                            ? null
-                            : category?.id,
-                        name:
-                          category?.name === activeCategory?.name
-                            ? null
-                            : category?.name,
-                        slug:
-                          category?.slug === activeCategory?.slug
-                            ? null
-                            : category?.slug,
+                        id: category?.id,
+                        name: category?.name,
+                        slug: category?.slug,
                         data: category?.children ?? [],
                         image: category?.image ?? null,
-                        open: shouldOpenDropdown,
+                        open: true,
                       });
                       setHoveredCategory(category);
-                      cancelScheduledClose();
                     }}
                     onMouseLeave={() => {
-                      scheduleClose();
+                      // Only reset if we're not hovering over the dropdown
+                      setTimeout(() => {
+                        if (!dropdownRef.current?.matches(":hover")) {
+                          resetActiveCategory();
+                        }
+                      }, 100);
                     }}
                     onClick={resetActiveCategory}
                   >
@@ -191,21 +164,10 @@ const Header = () => {
                     key={index}
                     onClick={() => resetActiveCategory()}
                     onMouseEnter={() => {
-                      // Immediately close dropdown for categories without children
-                      setHoveredCategory(null);
-                      setActiveCategory({
-                        open: false,
-                        id: null,
-                        name: null,
-                        slug: null,
-                        data: [],
-                        image: null,
-                      });
-                      cancelScheduledClose();
+                      setHoveredCategory(category);
+                      resetActiveCategory();
                     }}
-                    onMouseLeave={() => {
-                      scheduleClose();
-                    }}
+                    onMouseLeave={() => setHoveredCategory(null)}
                   >
                     {category?.name === "Karat Diamonds" ? (
                       <Image
@@ -234,6 +196,7 @@ const Header = () => {
                   href={`${category?.slug}`}
                   key={index}
                   onClick={resetActiveCategory}
+                  onMouseEnter={() => resetActiveCategory()}
                 >
                   <span
                     className={`activeCategoryHover relative block w-fit text-[15px] text-[#171717] hover:after:-bottom-[30px] 2xl:text-[17px] ${
@@ -255,135 +218,130 @@ const Header = () => {
             <HeaderIcons />
           </div>
         </div>
-        {activeCategory?.open &&
-          (hoveredHasChildren || hoveredCategory?.name === "Brendovi") && (
+        {activeCategory?.open && (
+          <div
+            onMouseEnter={() => {
+              // Keep dropdown open when hovering over it
+            }}
+            onMouseLeave={resetActiveCategory}
+            className={`absolute right-0 top-[114px] z-[100] w-full bg-white max-lg:hidden`}
+          >
             <div
-              onMouseLeave={() => {
-                setIsDropdownHovered(false);
-                resetActiveCategory();
-              }}
-              onMouseEnter={() => {
-                setIsDropdownHovered(true);
-                cancelScheduledClose();
-              }}
-              className={`absolute right-0 top-[114px] z-[100] w-full bg-white max-lg:hidden`}
+              ref={dropdownRef}
+              className="relative max-h-[420px] overflow-y-auto px-20 pb-14 pt-8"
             >
-              <div
-                ref={dropdownRef}
-                className="relative max-h-[420px] overflow-y-auto px-20 pb-14 pt-8"
-              >
-                <div className="flex h-full">
-                  <div
-                    className={`flex ${hoveredCategory?.name === "Brendovi" ? "w-full" : "w-[205px]"} flex-col items-start gap-1 pr-4`}
-                  >
-                    {landingPagesList?.items?.map((item, index) => {
-                      return (
-                        <Link
-                          key={index}
-                          onClick={resetActiveCategory}
-                          href={`/promo/${item?.slug}`}
-                          className="block text-lg font-medium text-primary transition-all duration-300 hover:translate-x-5 hover:text-slate-500"
-                        >
-                          {item?.name}
-                        </Link>
-                      );
-                    })}
-                    {hoveredCategory?.name === "Brendovi" &&
-                      brandsData?.length > 0 && (
-                        <div className="grid w-full grid-cols-4 gap-2">
-                          {brandsData.map((brand) => (
-                            <Link
-                              key={brand.id}
-                              href={`/${brand?.link?.link_path}`}
-                              className="block text-lg font-medium text-black transition-all duration-300 hover:text-primary"
-                              onClick={resetActiveCategory}
-                            >
-                              {brand.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    {hoveredCategory?.name !== "Brendovi" &&
-                      activeCategory?.data?.map((category, index) => (
-                        <button
-                          key={index}
-                          className={`${
-                            category?.id === activeSubCategory?.id ||
-                            pathname.includes(category?.slug)
-                              ? "text-primary"
-                              : ""
-                          } block text-left text-lg font-medium text-black hover:text-primary`}
-                          onClick={() => {
-                            setActiveSubCategory({
-                              id: category?.id,
-                              name: category?.name,
-                              slug_path: category?.slug_path,
-                              data: category?.children ?? [],
-                              image: category?.image ?? null,
-                              open: true,
-                            });
-                            setHoveredCategory(category);
-
-                            if (dropdownRef.current) {
-                              dropdownRef.current.scrollTo({
-                                top: 0,
-                                behavior: "smooth",
-                              });
-                            }
-                          }}
-                        >
-                          {category?.name}
-                        </button>
-                      ))}
-                  </div>
-                  {hoveredCategory?.name !== "Brendovi" &&
-                    categoryProducts?.items?.length > 0 && (
-                      <div className="flex flex-col gap-8">
-                        <div className="flex items-center gap-1 text-sm">
+              <div className="flex h-full">
+                <div
+                  className={`flex ${hoveredCategory?.name === "Brendovi" ? "w-full" : "w-[205px]"} flex-col items-start gap-1 pr-4`}
+                >
+                  {landingPagesList?.items?.map((item, index) => {
+                    return (
+                      <Link
+                        key={index}
+                        onClick={resetActiveCategory}
+                        href={`/promo/${item?.slug}`}
+                        className="block text-lg font-medium text-primary transition-all duration-300 hover:translate-x-5 hover:text-slate-500"
+                      >
+                        {item?.name}
+                      </Link>
+                    );
+                  })}
+                  {hoveredCategory?.name === "Brendovi" &&
+                    brandsData?.length > 0 && (
+                      <div className="grid w-full grid-cols-4 gap-2">
+                        {brandsData.map((brand) => (
                           <Link
-                            href={`${hoveredCategory?.slug_path ?? activeCategory?.slug}`}
-                            className="font-light hover:text-primary"
+                            key={brand.id}
+                            href={`/${brand?.link?.link_path}`}
+                            className="block text-lg font-medium text-black transition-all duration-300 hover:text-primary"
                             onClick={resetActiveCategory}
                           >
-                            Pogledajte sve
+                            {brand.name}
                           </Link>
-                          <Image
-                            src={"/icons/right-chevron.png"}
-                            alt="Chevron"
-                            width={16}
-                            height={16}
-                            className="mt-0.5 h-3 w-3 group-hover:invert"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-5 2xl:grid-cols-3">
-                          {categoryProducts.items.map((product) => (
-                            <Link
-                              key={product.id}
-                              href={`${product.slug_path}`}
-                              className="group flex h-[128px] w-[300px] items-center gap-5 rounded-lg border border-gray-200 bg-white pl-2 transition-all duration-300 ease-in-out hover:bg-primary 3xl:w-[350px]"
-                              onClick={resetActiveCategory}
-                            >
-                              <Image
-                                src={
-                                  product.image[0] ?? "/images/no-image-karat.jpg"
-                                }
-                                alt={product.basic_data.name}
-                                width={100}
-                                height={100}
-                                className="ransition-all h-[90px] w-[90px] min-w-[90px] bg-white object-contain transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:bg-primary"
-                              />
-                              <h3 className="ransition-all mt-2 line-clamp-2 pr-4 text-lg font-light duration-300 ease-in-out group-hover:text-white">
-                                {product.basic_data.name}
-                              </h3>
-                            </Link>
-                          ))}
-                        </div>
+                        ))}
                       </div>
                     )}
+                  {hoveredCategory?.name !== "Brendovi" &&
+                    activeCategory?.data?.map((category, index) => (
+                      <button
+                        key={index}
+                        className={`${
+                          category?.id === activeSubCategory?.id ||
+                          pathname.includes(category?.slug)
+                            ? "text-primary"
+                            : ""
+                        } block text-left text-lg font-medium text-black hover:text-primary`}
+                        onClick={() => {
+                          setActiveSubCategory({
+                            id: category?.id,
+                            name: category?.name,
+                            slug_path: category?.slug_path,
+                            data: category?.children ?? [],
+                            image: category?.image ?? null,
+                            open: true,
+                          });
+                          setHoveredCategory(category);
+
+                          if (dropdownRef.current) {
+                            dropdownRef.current.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
+                          }
+                        }}
+                      >
+                        {category?.name}
+                      </button>
+                    ))}
                 </div>
+                {hoveredCategory?.name !== "Brendovi" &&
+                  categoryProducts?.items?.length > 0 && (
+                    <div className="flex flex-col gap-8">
+                      <div className="flex items-center gap-1 text-sm">
+                        <Link
+                          href={`${hoveredCategory?.slug_path ?? activeCategory?.slug}`}
+                          className="font-light hover:text-primary"
+                          onClick={resetActiveCategory}
+                        >
+                          Pogledajte sve
+                        </Link>
+                        <Image
+                          src={"/icons/right-chevron.png"}
+                          alt="Chevron"
+                          width={16}
+                          height={16}
+                          className="mt-0.5 h-3 w-3 group-hover:invert"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-5 2xl:grid-cols-3">
+                        {categoryProducts.items.map((product) => (
+                          <Link
+                            key={product.id}
+                            href={`${product.slug_path}`}
+                            className="group flex h-[128px] w-[300px] items-center gap-5 rounded-lg border border-gray-200 bg-white pl-2 transition-all duration-300 ease-in-out hover:bg-primary 3xl:w-[350px]"
+                            onClick={resetActiveCategory}
+                          >
+                            <Image
+                              src={
+                                product.image[0] ?? "/images/no-image-karat.jpg"
+                              }
+                              alt={product.basic_data.name}
+                              width={100}
+                              height={100}
+                              className="ransition-all h-[90px] w-[90px] min-w-[90px] bg-white object-contain transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:bg-primary"
+                            />
+                            <h3 className="ransition-all mt-2 line-clamp-2 pr-4 text-lg font-light duration-300 ease-in-out group-hover:text-white">
+                              {product.basic_data.name}
+                            </h3>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
-          )}
+          </div>
+        )}
       </header>
       <div
         onClick={() => {
@@ -398,8 +356,8 @@ const Header = () => {
         }}
         className={
           activeCategory?.open
-            ? "visible fixed left-0 top-0 z-[99] h-screen w-screen bg-black/50 opacity-100 backdrop-blur-md transition-all duration-300"
-            : "invisible fixed left-0 top-0 z-[99] h-screen w-screen bg-black/50 opacity-0 backdrop-blur-md transition-all duration-300"
+            ? "visible fixed left-0 top-0 z-[99] h-screen w-screen bg-black/50 opacity-100 backdrop-blur-md transition-all duration-500"
+            : "invisible fixed left-0 top-0 z-[99] h-screen w-screen bg-black/50 opacity-0 backdrop-blur-md transition-all duration-500"
         }
       />
     </>
